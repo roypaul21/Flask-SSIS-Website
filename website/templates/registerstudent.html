@@ -1,0 +1,274 @@
+{% extends "base.html" %} {% block title %}Register Student{% endblock %}
+
+{% block content %}
+
+<html>
+    <head>
+        <style type="text/css">
+        *{
+          margin:20;
+          padding:100;
+          }
+            body{
+                background-image: url(https://www.palmerstudenthousing.com/wp-content/uploads/2020/05/student-with-laptop.jpg);
+                background-size: cover;
+                font-family: sans-serif;
+                margin-top:3px;
+                }
+            .regform{
+                      width:900px;
+                      background-color:rgb(0,0,0,0.6);
+                      margin:auto;
+                      color:#E5E5E5;
+                      padding:10px 0px 10px 0px;
+                      text-align:center;
+                      border-radius:15px 15px 0px 0px;
+                      font-size: 25px;
+                      margin-top:85px;
+                     }
+
+            .main{
+                  width:900px;
+                  background-color:rgb(0,0,0,0.5);
+                  margin:auto;
+                  }
+               form{
+                    padding: 10px;
+                    }
+
+            .name{
+                  margin-left: 45px;
+                  position: relative;
+                  top:50px;
+                  width:200px;
+                  color:#E5E5E5;
+                  font-size: 18px;
+                  font-weight: 700;
+                 }
+
+           .idnum{
+                  left:620px;
+                  position: relative;
+                  top:20px;
+                  width:200px;
+                  color:#E5E5E5;
+                  font-size: 18px;
+                  font-weight: 700;
+                 }
+
+            .fname{
+                        position: relative;
+                        margin-top:100px;
+                        left:40px;
+                        top:-80px;
+                        line-height:40px;
+                        border-radius:6px;
+                        padding:0 22px;
+                        font-size:16px
+                        color:white;
+                        font-weight: 700
+                       }
+
+            .lname{
+                        position: relative;
+                        margin-top:100px;
+                        left:240px;
+                        top:-225px;
+                        line-height:40px;
+                        border-radius:6px;
+                        padding:0 22px;
+                        font-size:16px
+                        color:white;
+                        font-weight: 700;
+                       }
+
+            .firstname{
+                       position: relative;
+                       left: 45px;
+                       top:-190px;
+                       color:#E5E5E5;
+                       font-weight: 500;
+                       font-size:13px;
+                       }
+           .lastname{
+                       position: relative;
+                       left: 315px;
+                       top:-230px;
+                       color:#E5E5E5;
+                       font-weight: 500;
+                       font-size: 13px;
+                       }
+
+          .id-number{
+                        position: relative;
+                        width:120;
+                        left:550px;
+                        top:-269px;
+                        line-height:40px;
+                        border-radius:6px;
+                        padding:0 22px;
+                        font-size:16px
+                        color:E5E5E5;
+                        font-weight: 700;
+                        }
+
+          .course-option{
+                          position: relative;
+                          width:200;
+                          left:100px;
+                          top:-190px;
+                          line-height:50px;
+                          border-radius:10px;
+                          padding:0 25px;
+                          font-size:16px
+                          color:#555;
+                          outline:none;
+                          font-weight: 600;
+                          overflow:hidden;
+                           }
+         .yrlvl-option{
+                          position: relative;
+                          width:200;
+                          left:175px;
+                          top:-190px;
+                          line-height:50px;
+                          border-radius:10px;
+                          padding:0 22px;
+                          font-size:16px
+                          color:#555;
+                          outline:none;
+                          font-weight: 600;
+                          overflow:hidden;
+                           }
+
+        .gender-option{
+                          position: relative;
+                          width:200;
+                          left:250px;
+                          top:-190px;
+                          line-height:50px;
+                          border-radius:10px;
+                          padding:0 22px;
+                          font-size:16px
+                          color:#555;
+                          outline:none;
+                          font-weight: 600;
+                          overflow:hidden;
+                           }
+
+        .regstud{
+               position:relative;
+               left:320px;
+               top:-100px;
+               background-color:#B3B6B7;
+               display:block;
+               text-align:center;
+               border-radius:12px;
+               border:2px solid #17202A;
+               padding: 9px 80px;
+               outline:none;
+               color:black;
+               font-size:18px;
+               transition:0.25px;
+               }
+
+        button:hover{
+                     background-color:#40E0D0;
+                    }
+        </style>
+
+    </head>
+
+    <body>
+
+    </body>
+
+
+</html>
+
+
+
+<form method="POST">
+
+   <h3 align="center" class="regform" style="font-size: 40px"> Student Registration Form </h3>
+
+   <div class="main">
+       <form>
+           <h1 class="name">Student Name</h1>
+           <h1 class="idnum"> ID Number</h1>
+           <input class="fname"
+                  type="text"
+                  id="firstname"
+                  name="firstname"
+                  placeholder="Enter First Name"><br>
+           <label class="firstname">First Name</label>
+
+           <input class="lname"
+                  type="text"
+                  id="lastname"
+                  name="lastname"
+                  placeholder="Enter Last Name"><br>
+           <label class="lastname">Last Name</label>
+
+
+           <input class="id-number"
+                  type="text"
+                  id="idnum"
+                  name="idnum"
+                  placeholder="Enter ID Number"><br>
+
+
+           <select class="course-option"
+                   name="course"
+                   id="course">
+           <option selected="selected">--Select Course</option><
+               {% for cour in cour_c %}
+                  <option>{{cour[0]}}</option>
+               {% endfor %}
+           </select>
+
+           <select class="yrlvl-option"
+                   name="yrlvl"
+                   id="yrlvl">
+           <option disabled="disabled" selected="selected">--Year Level</option><
+           <option>First Year</option>
+           <option>Second Year</option>
+           <option>Third Year</option>
+           <option>Fourth Year</option>
+           <option>Fifth Year</option>
+           </select>
+
+            <select class="gender-option"
+                   name="gender"
+                   id="gender">
+           <option disabled="disabled" selected="selected">--Select Gender</option><
+           <option>Male</option>
+           <option>Female</option>
+           <option>Other</option>
+           </select>
+
+            <button type="button" class="regstud" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Register
+          </button>
+
+              <!-- Registration confirmation Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+             <div class="modal-dialog">
+               <div class="modal-content">
+                 <div class="modal-header">
+                   <h5 class="modal-title" id="exampleModalLabel">Student Registration Confirmation</h5>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                 </div>
+                 <div class="modal-body"> Are you sure you want to Register this Student?</div>
+                 <div class="modal-footer">
+                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                   <button type="submit" class="btn btn-primary">Yep</button>
+                 </div>
+               </div>
+             </div>
+          </div>
+       </form>
+   </div>
+</form>
+
+{% endblock %}

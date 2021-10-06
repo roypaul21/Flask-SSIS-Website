@@ -1,0 +1,118 @@
+{% extends "base.html" %} {% block title %}HOME PAGE{% endblock %}
+
+{% block content %}
+<html>
+    <head>
+
+
+        <style type="text/css">
+        *{
+          margin:20;
+          padding:100;
+          }
+            body{
+                background-color: black;
+                background-size: cover;
+                font-family: sans-serif;
+                margin-top:3px;
+                }
+
+            .wrapper{
+                     position:relative;
+                     left:-200px;
+                     top:60px;
+                     display:inline-flex;}
+
+            .wrapper .static-txt{
+                     color:#D5D8DC;
+                     position:relative;
+                     top:185px;
+                     font-size:70px;
+
+                     }
+
+            .wrapper .dynamic-txt{
+                                  position:relative;
+                                  left:480px;
+                                  color:red;
+                                  height:98px;
+                                  line-height:90px;
+                                  overflow:hidden;
+                                  top:-100px;
+
+                                  }
+
+            .dynamic-txt li{
+                            position:relative;
+                            left:0px;
+                            top:0px;
+                            color:#FC6060;
+                            list-style:none;
+                            font-size:70px;
+                            font-weight:bold;
+                            animation: slide 8s steps(4) infinite;
+                          }
+
+            @keyframes slide{
+                              100%{
+                                    top:-360px;
+                                   }
+                              }
+
+            .dynamic-txt li span{
+                                  position:relative;}
+
+            .dynamic-txt li span::after{
+                                        position:absolute;
+                                        top:5px;
+                                        content:"";
+                                        border-left:2px solid #FC6060;
+                                        height:100%;
+                                        background:#000 ;
+                                        width:100%;
+                                        animation:typing 2s steps(11) infinite;
+                                        left:0;
+
+                                 }
+
+            @keyframes typing {
+                                    40%,60%{
+                                            left:calc(100% + 30px);
+                                            }
+                                    100%{
+                                          left:0%;
+                                    }
+                                   }
+
+
+       </style>
+
+    </head>
+    <div class="spinner-grow " role="status" style="animation-delay:0.50s; transform: rotate(0deg) translate(0, -35px) scale(1.4); color:#1C2833; position:relative; top:120px; left:450px ; width: 1rem; height: 1rem;"></div>
+    <div class="spinner-grow " role="status" style="animation-delay:1s; transform: rotate(0deg) translate(0, -35px) scale(1.4); color:#154360; width: 2rem; height: 2rem; position:relative; top:120px; left:470px;"></div>
+    <div class="spinner-grow " role="status" style="animation-delay:1.50s; transform: rotate(0deg) translate(0, -35px) scale(1.4); color:#2980B9; width: 3rem; height: 3rem; position:relative; top:120px; left:490px;"></div>
+    <div class="spinner-grow " role="status" style="animation-delay:2s; transform: rotate(0deg) translate(0, -35px) scale(1.4); color:#A9CCE3 ; width: 4rem; height: 4rem; position:relative; top:120px; left:510px;"></div>
+
+
+
+
+    <body>
+        <div class="wrapper">
+
+            <div class="static-txt">
+                Welcome to the
+            <ul class="dynamic-txt">
+                <li><span>Simple</span></li>
+                <li><span>Student</span></li>
+                <li><span>Information</span></li>
+                <li><span>System</span></li>
+            </ul>
+            </div>
+        </div>
+
+    </body>
+
+</html>
+
+{% endblock %}
+

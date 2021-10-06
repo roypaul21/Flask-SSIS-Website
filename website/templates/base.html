@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <style type="text/css">
+        .close1{
+                     font-size:18px;
+                     left: 1020px;
+                     position: relative;
+                     border-width:0;
+                     background-color:transparent;
+
+               }
+       .close2{
+                     font-size:18px;
+                     left: 1190px;
+                     position: relative;
+                     border-width:0;
+                     background-color:transparent;
+
+               }
+
+
+    </style>
+
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <title>{% block title %} HOME PAGE {% endblock %}</title>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark fixed-top" style="height:50px; margin-top:20px;">
+  <div class="container-fluid">
+    <a class="navbar-brand" style="position:relative; top:-15px;" href="/">Home</a>
+
+       <!-- student Dropdown-->
+        <li class="studs" style="position:relative; top:-27px; font-size:17px; left:-160px;">
+          <a class="nav-link dropdown-toggle stud" href="#" id="students" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#F0F3F4;">
+            Students
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color:black;">
+            <li><a class="dropdown-item" href="/students" style="color:white;">Records</a></li>
+            <li><hr class="dropdown-divider" style="color:white;"></li>
+            <li><a class="dropdown-item" href="/register" style="color:white;">Register</a></li>
+          </ul>
+        </li>
+
+        <!-- Course Dropdown-->
+        <li class="nav-item dropdown" style="position:relative; top:-27px; font-size:17px; left:-330px; color:#B2BABB;">
+          <a class="nav-link dropdown-toggle" href="#" id="course" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#F0F3F4;">
+            Course </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color:black;">
+            <li><a class="dropdown-item" href="/course" style="color:white;">Courses</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/add-course" style="color:white;">Add Course</a></li>
+          </ul>
+        </li>
+
+          <!-- College button-->
+        <li class="nav-item dropdown" style="position:relative; top:-27px; font-size:17px; left:-500px; color:white;">
+          <a class="nav-link dropdown-toggle" href="#" id="college" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#F0F3F4;">
+            College </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color:black;">
+            <li><a class="dropdown-item" href="/college" style="color:white;">Colleges</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/add-college" style="color:white;">Add College</a></li>
+          </ul>
+        </li>
+       <label style="color:#F0F3F4; position:relative; font-size:10px; left:176px; top:-1px;">Search</label>
+
+    <button class=" navbar-toggler" title="Press to Search" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" style="position:relative; top:-22px; font-size:15px; left:-30px;">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="background-color:#ECF0F1;">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel"style="color:#1C2833; font-size:25px; font-weight:700;" >Search Fields</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <form action="{{url_for('search_record.search_record')}}" method="POST">
+        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+          <li class="nav-item">
+              <!--Search ID Number, Name and ect -->
+            <p class="font-italic" style="position:relative; top:-20px; le">Search For Student's Records</p>
+            <input class="form-control" type="search" name="search-idnum" id="search-idnum" placeholder="Search ID Number (2018-2999)" aria-label="Search">
+          </li>
+          <li class="nav-item">
+              <label style="margin-top:50px; font-size:20px;">Name</label>
+              <input class="form-control" type="search" name="search-fname" id="search-fname" placeholder="Search First Name" aria-label="Search">
+          </li>
+          <li class="nav-item">
+              <input class="form-control" type="search" name="search-lname" id="search-lname" placeholder="Search Last Name" aria-label="Search">
+          </li>
+             <!--Search gender -->
+           <select class="drpgender-option"
+                   name="drpgender"
+                   id="drpgender" style="position:relative; width:150px; border-radius:10px; top:72px; left:2px;">
+           <option  selected="selected" value="">--Search Gender</option><
+           <option>Male</option>
+           <option>Female</option>
+           <option>Other</option>
+           </select>
+
+           <!--Search course -->
+           <select class="drpcourse-option"
+                   name="drpcourse"
+                   id="drpcourse" style="position:relative; width:150px; border-radius:10px; top:50px; left:200px;">
+           <option selected="selected" value="">--Search Course</option><
+               {% for cour in cour_c %}
+                  <option>{{cour[0]}}</option>
+               {% endfor %}
+           </select>
+
+           <!--Search college -->
+           <select class="drpcollege-option"
+                   name="drpcollege-code"
+                   id="drpcollege-code" style="position:relative; width:150px; border-radius:10px; top:72px; left:2px;">
+           <option selected="selected" value="">--Search College</option><
+               {% for coll in cor_coll %}
+                  <option>{{coll[0]}}</option>
+               {% endfor %}
+           </select>
+
+            <!--Search year level -->
+           <select class="drpyrlvl-option"
+                   name="drpyrlvl"
+                   id="drpyrlvl" style="position:relative; width:150px; border-radius:10px; top:50px; left:200px;">
+           <option selected="selected" value="">Search Year Level</option><
+           <option>First Year</option>
+           <option>Second Year</option>
+           <option>Third Year</option>
+           <option>Fourth Year</option>
+           <option>Fifth Year</option>
+           </select>
+
+
+        </ul>
+          <button class="btn btn btn-dark" type="submit" style="position:relative; left:130px; top:150px;">
+              Search
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</nav>
+   {% with messages = get_flashed_messages(with_categories=true) %}
+     {% if messages %}
+       {% for category, message in messages %}
+         {% if category == "error" %}
+          <div id="message">
+          <div>
+            <div class="alert alert-warning alert-dismissible fade show d-flex align-items-center"  role="alert" data-bs-toggle="err" style="postion:relative; top:70px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
+                 {{ message }}
+                <button type="button" class="close1" aria-label="Close" data-bs-dismiss="alert">
+                   <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+          </div>
+          </div>
+         {% else %}
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert" data-bs-toggle="succ" style="postion:relative; top:70px;">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/>
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+
+                <button type="button" class="close2" aria-label="Close" data-bs-dismiss="alert">
+                   <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+         {% endif %}
+       {% endfor %}
+     {% endif %}
+   {% endwith %}
+   <div class="container">
+   {% block content %}
+   {% endblock %}
+   </div>
+
+
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+             integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js"
+             integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/" crossorigin="anonymous"></script>
+
+    <script
+       type = "text/javascript"
+       src = "{{ url_for('static', filename='index.js') }}"
+   ></script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+{% extends "base.html" %} {% block title %}Colleges{% endblock %}
+
+{% block content %}
+    <html>
+    <head>
+        <style type="text/css">
+        *{
+          margin:20;
+          padding:100;
+          }
+            body{
+                background-color: black;
+                background-size: cover;
+                font-family: sans-serif;
+                margin-top:3px;
+                }
+
+            .table{
+                   margin-bottom:100px;
+                   }
+
+            .college-able{
+                          position:relative;
+                          top:100px;
+                          color:white;
+                          margin-bottom:200px;
+                          }
+
+            .wrapper{
+                     position:relative;
+                     left:-280px;
+                     top:60px;
+                     display:inline-flex;}
+
+
+
+            .wrapper .dynamic-txt{
+                                  position:relative;
+                                  left:250px;
+                                  color:black;
+                                  height:98px;
+                                  line-height:90px;
+                                  overflow:hidden;
+                                  top:60px;
+
+
+                                  }
+
+            .dynamic-txt li{
+                            position:relative;
+                            left:0px;
+                            top:0px;
+                            color:#ECF0F1;
+                            list-style:none;
+                            font-size:40px;
+                          }
+
+            .dynamic-txt li span{
+                                  position:relative;}
+
+            .dynamic-txt li span::after{
+                                        position:absolute;
+                                        top:5px;
+                                        content:"";
+                                        border-left:2px solid black;
+                                        height:100%;
+                                        background: black;
+                                        width:100%;
+                                        animation:typing 1.5s steps(50);
+                                        animation-fill-mode: forwards;
+                                        left:0;
+
+
+                                 }
+
+            @keyframes typing {
+                                      100%{
+                                            left:100%;
+
+                                      margin: 0px -35px 0px 35px;
+                                        }
+
+
+                                           100% {
+                                                width: 100%;
+                                                height: 100%;
+                                                }
+                                   }
+
+       </style>
+
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <ul class="dynamic-txt">
+                <li><span>College List</span></li>
+            </ul>
+        </div>
+
+       <div class="spinner-grow " role="status" style="animation-delay:1.40s; transform: rotate(0deg) translate(0, -35px) scale(1.4); color:#1C2833; position:relative; top:120px; left:150px ; width: 1rem; height: 1rem;"></div>
+       <div class="spinner-grow " role="status" style="animation-delay:1.90s; transform: rotate(0deg) translate(0, -35px) scale(1.4); color:#154360; width: 2rem; height: 2rem; position:relative; top:120px; left:170px;"></div>
+       <div class="spinner-grow " role="status" style="animation-delay:2.40s; transform: rotate(0deg) translate(0, -35px) scale(1.4); color:#2980B9; width: 3rem; height: 3rem; position:relative; top:120px; left:190px;"></div>
+       <div class="spinner-grow " role="status" style="animation-delay:2.90s; transform: rotate(0deg) translate(0, -35px) scale(1.4); color:#A9CCE3 ; width: 4rem; height: 4rem; position:relative; top:120px; left:210px;"></div>
+
+        <div class="college-able">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <td style="color:white;">College Code</td>
+                    <td style="color:white;">College Name</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for c in cor_coll %}
+                  <tr>
+                      <td style="color:white;">{{c[0]}}</td>
+                      <td style="color:white;">{{c[1]}}</td>
+                      <td class="border-0"  width="150">
+
+                       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+                        <!-- Edit button -->
+                        <a href="/edit/{{c[0]}}" type="submit" title="Edit" class="btn btn-info bt-sm" data-bs-toggle="modal" data-bs-target="#updateModal{{c[0]}}"><i class="fa fa-pencil"></i></a>
+
+                        <!-- Update confirmation Modal -->
+                        <div class="modal fade" id="updateModal{{c[0]}}" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                             <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title-edit" id="updateModalLabel" style="position:relative; left:180px; font-size:22px; font-weight:bold;">College Edit</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+
+                                 <form action="{{url_for('college.update_college')}}" method="POST">
+                                     <div class="coll_code">
+                                         <input class="ccc" id="college-code" name="college-code" value="{{c[0]}}" style="position:relative; left:5000px;">
+                                         <label for="college-name" class="college-name-label" style="font-weight:bold; position:relative; left:-165px;" >College Name:</label>
+                                         <input class="form-control" id="college-name" name="college-name" value="{{c[1]}}" style="font-weight:bold; position:relative; left:20px; width:400px;">
+                                     </div>
+
+                                     <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                      <button type="submit"  class="btn btn-primary">Update</button>
+                                     </div>
+
+                                 </form>
+                             </div>
+                          </div>
+                        </div>
+
+                        <!--Delete btn-->
+                        <a href="/delete/{{c[0]}}" title="Delete" class="btn btn-danger btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{c[0]}}"><i class="fa fa-trash"></i></a>
+                          <!--Delete Modal-->
+                        <div class="modal fade" id="deleteModal{{c[0]}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title-delete" id="deleteModalLabel" style="font-weight:bold; position:relative; font-size:19px; left:100px;">College Delete Confirmation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body-delete" style="font-weight:bold;  position:relative; left:80px; "> Are you sure you want to Delete this College?</div>
+                                <form action="{{url_for('college.delete_college')}}" method="POST">
+                                    <div class="coll_codes">
+                                         <input class="college-code" id="college-codes" name="college-code" value="{{c[0]}}" style="font-weight:bold; border:0px solid #17202A; position:relative; left:220px;">
+                                    </div>
+                                    <div class="modal-footer">
+                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                     <button type="submit" class="btn btn-primary">Yep</button>
+                                    </div>
+                                </form>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                  </tr>
+                  {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+    </body>
+
+</html>
+{% endblock %}

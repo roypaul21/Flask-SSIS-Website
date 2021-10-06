@@ -1,0 +1,310 @@
+{% extends "base.html" %} {% block title %}Search Record{% endblock %}
+
+{% block content %}
+    <html>
+    <head>
+        <style type="text/css">
+        *{
+          margin:20;
+          padding:100;
+          }
+            body{
+                background-color: black;
+                background-size: cover;
+                font-family: sans-serif;
+                margin-top:3px;
+                }
+
+            .studentss{
+                 position:relative;
+                 margin-top:80px;
+                 margin-bottom:50px;
+
+                 color:#ECF0F1;
+                 }
+
+        .table{
+                      position:relative;
+                      color:white;
+                      background-color:black;
+                      }
+
+        .modal-title-edit{
+                     position:relative;
+                     color:#1C2833;
+                     font-size:25px;
+                     font-weight:700;
+                     left:300px;
+                     }
+        .name{
+              position: relative;
+              top:-100px;
+              color:#1C2833;
+              font-weight:700;
+              left:130px;
+              }
+        .first-name{
+                    color:#1C2833;
+                    font-weight:500;
+                    font-size:12px;
+                    position: relative;
+                    left:-170px;
+                    top:-45px;
+                    }
+        .fn{
+                        position: relative;
+                        width:250px;
+                        height:35px;
+                        margin-top:100px;
+                        left:80px;
+                        top:-70px;
+                        line-height:40px;
+                        border-radius:6px;
+                        padding:0 10px;
+                        font-size:16px
+                        color:white;
+                        font-weight: 700;
+            }
+        .ln{
+                        position: relative;
+                        width:250px;
+                        height:35px;
+                        left:390px;
+                        top:-105px;
+                        line-height:40px;
+                        border-radius:6px;
+                        padding:0 10px;
+                        font-size:16px
+                        color:white;
+                        font-weight: 700;
+            }
+        .last-name{
+                    color:#1C2833;
+                    font-weight:500;
+                    font-size:12px;
+                    position: relative;
+                    left:140px;
+                    top:-75px;
+                    }
+
+        .course-option{
+                          position: relative;
+                          width:200;
+                          top:-40px;
+                          left:20px;
+                          line-height:50px;
+                          margin-bottom:20px;
+                          border-radius:10px;
+                          padding:10px 30px;
+                          font-size:20px
+                          color:#555;
+                          font-weight: 600;
+                      }
+
+        .gender-option{
+                          position: relative;
+                          width:200;
+                          top:-103px;
+                          left:260px;
+                          line-height:50px;
+                          margin-bottom:20px;
+                          border-radius:10px;
+                          padding:10px 30px;
+                          font-size:20px
+                          color:#555;
+                          font-weight: 600;
+                          }
+        .yrlvl-option{
+                          position: relative;
+                          width:200;
+                          top:-166px;
+                          left:500px;
+                          line-height:50px;
+                          margin-bottom:20px;
+                          border-radius:10px;
+                          padding:10px 30px;
+                          font-size:20px
+                          color:#555;
+                          font-weight: 600;
+                          }
+
+        .modal-title-delete{
+                     position:relative;
+                     color:#1C2833;
+                     font-size:25px;
+                     font-weight:700;
+                     left:60px;
+                     }
+
+        .modal-body-delete{
+                     color:#CD6155;
+                     font-size:18px;
+                     font-weight:500;
+                     position:relative;
+                     left:67px;
+                     }
+
+        .idn{
+                     position:relative;
+                     left:340px;
+                     border:0px solid #17202A;
+                     }
+        .idnu{
+                     position:relative;
+                     left:1000px;
+                     border:0px solid #17202A;
+                     color:white;
+                     }
+        .f-n{
+                     position:relative;
+                     border:0px solid #17202A;
+                     font-size:18px;
+                     color:black;
+                     width:150px;
+                     left:80px;
+                     }
+        .l-n{
+                     position:relative;
+                     left:81px;
+                     border:0px solid #17202A;
+                     font-size:18px;
+                     color:black;
+                     }
+       </style>
+        <h1 class="studentss">Searched Student's Record</h1>
+        <div class="students_table">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <td>ID Number</td>
+                    <td>First Name</td>
+                    <td>Last Name</td>
+                    <td>Gender</td>
+                    <td>Course</td>
+                    <td>Year Level</td>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for s in search_std %}
+                  <tr>
+                      <td>{{s[0]}}</td>
+                      <td>{{s[1]}}</td>
+                      <td>{{s[2]}}</td>
+                      <td>{{s[3]}}</td>
+                      <td>{{s[4]}}</td>
+                      <td>{{s[5]}}</td>
+                      <td class="border-0" width="150">
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+                        <!-- Edit button -->
+                        <a href="/edit/{{s[0]}}" id="ccc" type="submit" class="btn btn-info bt-sm" data-bs-toggle="modal" data-bs-target="#updateModal{{s[0]}}"><i class="fa fa-pencil"></i></a>
+                        </form>
+                        <!-- Update confirmation Modal -->
+                        <div class="modal fade" id="updateModal{{s[0]}}" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                             <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title-edit" id="updateModalLabel">Student Edit</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                 <form action="{{url_for('search_record.update_student')}}" method="POST">
+                                     <div>
+                                         <input type="text" class="idn" id="idnum" name="idnum" value="{{s[0]}}">
+                                     </div>
+                                     <div class="f_name">
+                                         <label class="name">Name</label>
+                                         <input type="text" class="fn" id="first-name" name="first-name" value="{{s[1]}}">
+                                         <label for="first-name" class="first-name">First Name</label>
+                                     </div>
+                                     <div class="l_name">
+                                         <input type="text" class="ln" id="last-name" name="last-name" value="{{s[2]}}">
+                                         <label for="last-name" class="last-name">Last Name</label>
+                                     </div>
+
+                                     <div class="cour_code">
+                                         <select class="course-option"
+                                                 name="course-code"
+                                                 id="course-code">
+                                         <option selected="selected">{{s[6]}}</option><
+                                           {% for ccc in cour_c %}
+                                         <option>{{ccc[0]}}</option>
+                                           {% endfor %}
+                                         </select>
+                                     </div>
+
+                                     <div class="gen_code">
+                                         <select class="gender-option"
+                                                 name="gender"
+                                                 id="gender">
+                                         <option selected="selected">{{s[3]}}</option><
+                                         <option>Male</option>
+                                         <option>Female</option>
+                                         <option>Others</option>
+                                         </select>
+                                     </div>
+
+                                     <div class="yl_code">
+                                         <select class="yrlvl-option"
+                                                 name="yrlvl"
+                                                 id="yrlvl">
+                                         <option selected="selected">{{s[5]}}</option><
+                                         <option>First Year</option>
+                                         <option>Second Year</option>
+                                         <option>Third Year</option>
+                                         <option>Fourth Year</option>
+                                         <option>Fifth Year</option>
+                                         </select>
+                                     </div>
+                                     <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                      <button type="submit" class="btn btn-primary">Update</button>
+                                     </div>
+                                 </form>
+                                </div>
+                             </div>
+                          </div>
+                        </div>
+
+                        <a href="/delete/{{s[0]}}" class="btn btn-danger btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal{{s[0]}}"><i class="fa fa-trash"></i></a>
+
+                          <!--Delete Modal-->
+                        <div class="modal fade" id="deleteModal{{s[0]}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title-delete" id="deleteModalLabel">Student Delete Confirmation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <form action="{{url_for('search_record.delete_student')}}" method="POST">
+                              <div class="modal-body-delete"> Are you sure you want to Remove this Student?</div>
+                                   <div>
+                                         <input type="text" class="f-n" id="f-name" name="first-name" value="{{s[1]}}">
+                                         <input type="text" class="l-n" id="l-name" name="last-name" value="{{s[2]}}">
+                                         <input type="text" class="idnu" id="idnumber" name="idnum" value="{{s[0]}}">
+                                  </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                  <button type="submit" class="btn btn-primary">Yep</button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+
+                      </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </head>
+
+    <body>
+
+    </body>
+
+</html>
+{% endblock %}
