@@ -3,11 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
+.idea
 env/
 build/
 develop-eggs/
@@ -23,6 +25,8 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+js/
+css/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
