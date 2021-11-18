@@ -1,15 +1,21 @@
 from flask import Blueprint, render_template, request, flash, Flask
-from flask_mysqldb import MySQL
 import mysql.connector
+from flask_mysqldb import MySQL
+import os
+from decouple import config
 
-
+host = config('HOST', default='')
+password = config('PASSWORD')
+user = config('USER')
+db = config('DATABASE')
 
 mydb = mysql.connector.connect(
-       host = "127.0.0.1",
-       user = "root",
-       password = "izakme123",
-       database =  "ssis_website",
+       host = host,
+       user = user,
+       password = password,
+       database = db
        )
+
 my_cursor = mydb.cursor()
 
 

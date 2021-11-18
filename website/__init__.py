@@ -2,13 +2,14 @@ from flask import Flask
 from flask_mysqldb import MySQL
 
 
+
 def ssis_app():
     app = Flask(__name__)
 
 
     app.config['SECRET_KEY'] = 'ssis'
 
-
+    
     from .views import views
     from .auth import auth
     from .studentlist import students
