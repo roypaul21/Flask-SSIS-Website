@@ -2,20 +2,14 @@ from flask import Blueprint, render_template, request, flash
 import mysql.connector
 from flask_mysqldb import MySQL
 import os
-from decouple import config
-
-host = config('HOST', default='')
-password = config('PASSWORD')
-user = config('USER')
-db = config('DATABASE')
+from .config import HOST, USER, DATABASE, PASSWORD
 
 mydb = mysql.connector.connect(
-       host = host,
-       user = user,
-       password = password,
-       database = db
+       host = HOST,
+       user = USER,
+       password = PASSWORD,
+       database = DATABASE
        )
-
 my_cursor = mydb.cursor()
 
 auth = Blueprint('auth', __name__)
