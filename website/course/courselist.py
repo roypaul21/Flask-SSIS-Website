@@ -1,22 +1,14 @@
-from flask import Blueprint, render_template, request, flash, url_for
-import mysql.connector
+from flask import Blueprint, render_template, request, flash
 from flask_mysqldb import MySQL
 import os
-from .config import HOST, USER, DATABASE, PASSWORD
+from website import mysql
 
-mydb = mysql.connector.connect(
-       host = HOST,
-       user = USER,
-       password = PASSWORD,
-       database = DATABASE
-       )
-
-my_cursor = mydb.cursor()
 
 course = Blueprint('course', __name__)
 
 @course.route('/course')
 def course_list():
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("""SELECT course.course_code, course.course_name, college.college_name, college.college_code FROM ssis_website.college
                           INNER JOIN ssis_website.course ON course.college_code = college.college_code""")
     cor_list = my_cursor.fetchall()
@@ -27,16 +19,17 @@ def course_list():
     my_cursor.execute("SELECT college.college_code FROM ssis_website.college")
     cor_coll = my_cursor.fetchall()
 
-    mydb.commit()
+    mysql.connection.commit()
 
     return render_template("courses.html", cor_list = cor_list, cor_coll=cor_coll, cour_c=cour_c)
 
 @course.route('/add-course', methods=['GET', 'POST'])
 def add_course():
+    my_cursor = mysql.connection.cursor()
 
     my_cursor.execute("SELECT college_code FROM college")
     cor_coll = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
@@ -59,21 +52,21 @@ def add_course():
             flash('Please Select College', category='error')
         else:
             my_cursor.execute("INSERT INTO course(course_code, course_name, college_code) VALUES(%s, %s, %s)", (corcode, corname, colcode))
-            mydb.commit()
+            mysql.connection.commit()
             flash('Course Successfully Register', category='success')
 
     return render_template("addcourse.html", cour_c=cour_c, cor_coll=cor_coll, )
-mydb.commit()
 
 @course.route('/updated_course', methods=['GET', 'POST'])
 def updated_course():
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("""SELECT course.course_code, course.course_name, college.college_name, college.college_code FROM ssis_website.college
                               INNER JOIN ssis_website.course ON course.college_code = college.college_code""")
     cor_list = my_cursor.fetchall()
 
     my_cursor.execute("SELECT college_code FROM college")
     cor_coll = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
@@ -90,26 +83,27 @@ def updated_course():
         else:
             my_cursor.execute("UPDATE ssis_website.course SET course.course_code=%s, course.course_name=%s, course.college_code=%s WHERE course.course_code=%s", (cc, cn, clc, cc))
             flash("Course Successfully Updated",category='success')
-            mydb.commit()
+            mysql.connection.commit()
 
         return render_template('courses.html', cour_c=cour_c, cor_coll=cor_coll, cor_list=cor_list)
-mydb.commit()
+
 
 @course.route('/delete_course', methods=['GET', 'POST'])
 def delete_course():
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("""SELECT course.course_code, course.course_name, college.college_name, college.college_code FROM ssis_website.college
                                  INNER JOIN ssis_website.course ON course.college_code = college.college_code""")
     cor_list = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     my_cursor.execute("SELECT college_code FROM college")
     cor_coll = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
 
-    mydb.commit()
+    mysql.connection.commit()
 
     if request.method == 'POST':
        cc = request.form.get('course-code')
@@ -117,10 +111,10 @@ def delete_course():
        my_cursor.execute("DELETE FROM ssis_website.course WHERE course.course_code=%s", (request.form.get('course-code'),))
 
        flash("Course Successfully Remove", category='success')
-       mydb.commit()
+       mysql.connection.commit()
 
 
     return render_template("courses.html", cour_c=cour_c, cor_coll=cor_coll, cor_list=cor_list)
-mydb.commit()
+
 
 

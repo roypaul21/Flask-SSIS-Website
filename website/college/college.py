@@ -1,39 +1,32 @@
-from flask import Blueprint, render_template, request, flash, Flask
-import mysql.connector
+from flask import Blueprint, render_template, request, flash
 from flask_mysqldb import MySQL
 import os
-from .config import HOST, USER, DATABASE, PASSWORD
-
-mydb = mysql.connector.connect(
-       host = HOST,
-       user = USER,
-       password = PASSWORD,
-       database = DATABASE
-       )
-my_cursor = mydb.cursor()
+from website import mysql
 
 
 college = Blueprint('college', __name__)
 
 @college.route('/college')
 def collegelist():
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
 
     my_cursor.execute("SELECT college_code, college_name FROM college")
     cor_coll = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     return render_template("colleges.html", cor_coll = cor_coll, cour_c=cour_c)
 
 @college.route('/add-college', methods=['GET', 'POST'])
 def add_college():
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
 
     my_cursor.execute("SELECT college_code FROM college")
     cor_coll = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     if request.method == 'POST':
         colcode = request.form.get('college-code')
@@ -45,22 +38,22 @@ def add_college():
             flash("Please Input College Name", category="error")
         else:
             my_cursor.execute("INSERT INTO college(college_code, college_name) VALUES(%s, %s)",(colcode, colname))
-            mydb.commit()
+            mysql.connection.commit()
 
             flash('College Successfully Register', category='success')
 
     return render_template("addcollege.html",  cor_coll = cor_coll, cour_c=cour_c)
-mydb.commit()
 
 
 @college.route('/update-college', methods=['GET', 'POST'])
 def update_college():
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
 
     my_cursor.execute("SELECT college_code, college_name  FROM college")
     cor_coll = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     if request.method == 'POST':
         cn = request.form.get('college-name')
@@ -75,7 +68,7 @@ def update_college():
         else:
             flash("College Name Successfully Updated", category='success')
             my_cursor.execute("UPDATE ssis_website.college SET college_code=%s, college_name=%s WHERE college_code=%s", (cc, cn, cc))
-            mydb.commit()
+            mysql.connection.commit()
 
             return render_template("colleges.html", cor_coll=cor_coll, cour_c=cour_c)
 
@@ -84,12 +77,13 @@ def update_college():
 
 @college.route('/delete-college', methods=['GET', 'POST'])
 def delete_college():
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
 
     my_cursor.execute("SELECT college_code, college_name FROM college")
     cor_coll = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     if request.method == 'POST':
         cc = request.form.get('college-code')
@@ -98,6 +92,6 @@ def delete_college():
                           (request.form.get('college-code'),))
 
         flash("College Successfully Remove", category='success')
-        mydb.commit()
+        mysql.connection.commit()
 
         return render_template("colleges.html", cor_coll=cor_coll, cour_c=cour_c)

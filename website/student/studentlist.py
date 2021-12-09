@@ -1,23 +1,14 @@
-from flask import Blueprint, render_template, request, flash, url_for
+from flask import Blueprint, render_template, request, flash
 from flask_mysqldb import MySQL
-import mysql.connector
 import os
-from .config import HOST, USER, DATABASE, PASSWORD
-
-mydb = mysql.connector.connect(
-       host = HOST,
-       user = USER,
-       password = PASSWORD,
-       database = DATABASE
-       )
-
-my_cursor = mydb.cursor()
+from website import mysql
 
 
 students = Blueprint('students', __name__)
 
 @students.route('/students')
 def record():
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, course.course_code FROM ssis_website.course
                              INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
     student_list = my_cursor.fetchall()
@@ -28,13 +19,13 @@ def record():
 
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     return render_template("studentrecord.html", records=student_list, cour_c=cour_c, cor_coll=cor_coll)
-mydb.commit()
 
 @students.route('/updated_students', methods=['GET', 'POST'])
 def updated_students():
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, course.course_code FROM ssis_website.course
                                  INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
     student_list = my_cursor.fetchall()
@@ -44,7 +35,7 @@ def updated_students():
 
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     if request.method == 'POST':
         idn = request.form.get('idnum')
@@ -76,15 +67,14 @@ def updated_students():
                 (fname, lname, gender, courses, yrlvl, idn))
 
             flash("Student Successfully Updated", category='success')
-            mydb.commit()
+            mysql.connection.commit()
 
     return render_template("studentrecord.html", records=student_list, cour_c=cour_c, cor_coll=cor_coll)
-
-mydb.commit()
 
 
 @students.route('/delete_students', methods=['GET', 'POST'])
 def delete_students():
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, course.course_code FROM ssis_website.course
                                      INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
     student_list = my_cursor.fetchall()
@@ -94,7 +84,7 @@ def delete_students():
 
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     if request.method == 'POST':
         idn = request.form.get('idnum')
@@ -104,9 +94,9 @@ def delete_students():
                           (request.form.get('idnum'),))
 
         flash("Student Successfully Remove", category='success')
-        mydb.commit()
+        mysql.connection.commit()
 
     return render_template("studentrecord.html", records=student_list, cour_c=cour_c, cor_coll=cor_coll)
-mydb.commit()
+
 
 

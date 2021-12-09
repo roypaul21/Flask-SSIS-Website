@@ -1,17 +1,7 @@
-from flask import Blueprint, render_template, request, flash, url_for, redirect
+from flask import Blueprint, render_template, request, flash
 from flask_mysqldb import MySQL
-import mysql.connector
 import os
-from .config import HOST, USER, DATABASE, PASSWORD
-
-mydb = mysql.connector.connect(
-       host = HOST,
-       user = USER,
-       password = PASSWORD,
-       database = DATABASE
-       )
-
-my_cursor = mydb.cursor()
+from website import mysql
 
 
 search = Blueprint('search_record', __name__)
@@ -19,13 +9,14 @@ search = Blueprint('search_record', __name__)
 @search.route('/search_record', methods=['GET', 'POST'])
 def search_record():
     global search_std
+    my_cursor = mysql.connection.cursor()
 
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
 
     my_cursor.execute("SELECT college_code FROM college")
     cor_coll = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     if request.method == 'POST':
         id_nm = request.form.get('search-idnum')
@@ -51,24 +42,24 @@ def search_record():
 
                search_std = my_cursor.fetchall()
                print(search_std)
-               mydb.commit()
+               mysql.connection.commit()
                if not search_std:
                    flash("No Student Recorded According to your Search Fields (Search Again)", category='error')
 
                return render_template("search_record.html", cour_c=cour_c, cor_coll=cor_coll, search_std=search_std)
         return render_template("search_record.html", cour_c=cour_c, cor_coll=cor_coll, search_std=search_std)
-mydb.commit()
 
 
 @search.route('/delete_student', methods=['GET', 'POST'])
 def delete_student():
+    my_cursor = mysql.connection.cursor()
 
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
 
     my_cursor.execute("SELECT college_code FROM college")
     cor_coll = my_cursor.fetchall()
-    mydb.commit()
+    mysql.connection.commit()
 
     if request.method == 'POST':
         '''
@@ -87,7 +78,7 @@ def delete_student():
                           (request.form.get('idnum'),))
 
         flash("Student Successfully Remove", category='success')
-        mydb.commit()
+        mysql.connection.commit()
 
         return render_template("search_record.html", cour_c=cour_c, cor_coll=cor_coll)
 
@@ -95,13 +86,14 @@ def delete_student():
 @search.route('/update_student', methods=['GET', 'POST'])
 def update_student():
     if request.method == 'POST':
+        my_cursor = mysql.connection.cursor()
 
         my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
         cour_c = my_cursor.fetchall()
 
         my_cursor.execute("SELECT college_code FROM college")
         cor_coll = my_cursor.fetchall()
-        mydb.commit()
+        mysql.connection.commit()
 
         idn = request.form.get('idnum')
         fname = request.form.get('first-name')
@@ -137,11 +129,10 @@ def update_student():
                 (fname, lname, gender, courses, yrlvl, idn))
 
             flash("Student Successfully Updated", category='success')
-            mydb.commit()
+            mysql.connection.commit()
 
         return render_template("search_record.html", search_std = search_std, cour_c=cour_c, cor_coll=cor_coll)
 
     return render_template("search_record.html", search_std = search_std, cour_c=cour_c, cor_coll=cor_coll)
-mydb.commit()
 
 

@@ -1,21 +1,30 @@
 from flask import Flask
 from flask_mysqldb import MySQL
+from flask_mysql_connector import MySQL
+from config import HOST, USER, DATABASE, PASSWORD, SECRET_KEY
+mysql = MySQL()
 
 
 
-def ssis_app():
-    app = Flask(__name__)
+def create_app(test_config=None):
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_mapping(
+        SECRET_KEY=SECRET_KEY,
+        MYSQL_HOST=HOST,
+        MYSQL_DATABASE=DATABASE,
+        MYSQL_USER=USER,
+        MYSQL_PASSWORD=PASSWORD,
+    )
 
 
-    app.config['SECRET_KEY'] = 'ssis'
+    mysql.init_app(app)
 
-    
-    from .views import views
-    from .auth import auth
-    from .studentlist import students
-    from .courselist import course
-    from .college import college
-    from .search_record import search
+    from .home.views import views
+    from .student.auth import auth
+    from .student.studentlist import students
+    from .course.courselist import course
+    from .college.college import college
+    from .home.search_record import search
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
