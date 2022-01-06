@@ -107,7 +107,7 @@ def delete_course():
 
     if request.method == 'POST':
        cc = request.form.get('course-code')
-       print(cc)
+
        my_cursor.execute("DELETE FROM ssis_website.course WHERE course.course_code=%s", (request.form.get('course-code'),))
 
        flash("Course Successfully Remove", category='success')
