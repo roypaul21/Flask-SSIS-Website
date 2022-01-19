@@ -51,10 +51,6 @@ def update_college():
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
 
-    my_cursor.execute("SELECT college_code, college_name  FROM college")
-    cor_coll = my_cursor.fetchall()
-    mysql.connection.commit()
-
     if request.method == 'POST':
         cn = request.form.get('college-name')
         cc = request.form.get('college-code')
@@ -70,9 +66,11 @@ def update_college():
             my_cursor.execute("UPDATE ssis_website.college SET college_code=%s, college_name=%s WHERE college_code=%s", (cc, cn, cc))
             mysql.connection.commit()
 
+            my_cursor.execute("SELECT college_code, college_name  FROM college")
+            cor_coll = my_cursor.fetchall()
+
             return render_template("colleges.html", cor_coll=cor_coll, cour_c=cour_c)
 
-    return render_template("colleges.html", cor_coll=cor_coll, cour_c=cour_c)
 
 
 @college.route('/delete-college', methods=['GET', 'POST'])
@@ -81,17 +79,15 @@ def delete_college():
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
 
-    my_cursor.execute("SELECT college_code, college_name FROM college")
-    cor_coll = my_cursor.fetchall()
-    mysql.connection.commit()
-
     if request.method == 'POST':
         cc = request.form.get('college-code')
 
         my_cursor.execute("DELETE FROM ssis_website.college WHERE college.college_code=%s",
                           (request.form.get('college-code'),))
+        mysql.connection.commit()
 
         flash("College Successfully Remove", category='success')
-        mysql.connection.commit()
+        my_cursor.execute("SELECT college_code, college_name FROM college")
+        cor_coll = my_cursor.fetchall()
 
         return render_template("colleges.html", cor_coll=cor_coll, cour_c=cour_c)

@@ -26,10 +26,6 @@ def record():
 @students.route('/updated_students', methods=['GET', 'POST'])
 def updated_students():
     my_cursor = mysql.connection.cursor()
-    my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, course.course_code FROM ssis_website.course
-                                 INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
-    student_list = my_cursor.fetchall()
-
     my_cursor.execute("SELECT course.college_code FROM ssis_website.course")
     cor_coll = my_cursor.fetchall()
 
@@ -65,9 +61,14 @@ def updated_students():
         else:
             my_cursor.execute("UPDATE ssis_website.students SET students.first_name=%s, students.last_name=%s, students.gender=%s, students.course_code=%s, students.year=%s WHERE students.id_number=%s",
                 (fname, lname, gender, courses, yrlvl, idn))
+            mysql.connection.commit()
 
             flash("Student Successfully Updated", category='success')
-            mysql.connection.commit()
+
+
+    my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, course.course_code FROM ssis_website.course
+                                               INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
+    student_list = my_cursor.fetchall()
 
     return render_template("studentrecord.html", records=student_list, cour_c=cour_c, cor_coll=cor_coll)
 
@@ -75,10 +76,6 @@ def updated_students():
 @students.route('/delete_students', methods=['GET', 'POST'])
 def delete_students():
     my_cursor = mysql.connection.cursor()
-    my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, course.course_code FROM ssis_website.course
-                                     INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
-    student_list = my_cursor.fetchall()
-
     my_cursor.execute("SELECT course.college_code FROM ssis_website.course")
     cor_coll = my_cursor.fetchall()
 
@@ -92,9 +89,12 @@ def delete_students():
         print(idn)
         my_cursor.execute("DELETE FROM ssis_website.students WHERE students.id_number=%s",
                           (request.form.get('idnum'),))
-
-        flash("Student Successfully Remove", category='success')
         mysql.connection.commit()
+        flash("Student Successfully Remove", category='success')
+
+    my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, course.course_code FROM ssis_website.course
+                                        INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
+    student_list = my_cursor.fetchall()
 
     return render_template("studentrecord.html", records=student_list, cour_c=cour_c, cor_coll=cor_coll)
 
