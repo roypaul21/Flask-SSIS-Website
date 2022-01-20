@@ -1,23 +1,19 @@
 from flask import Blueprint, render_template, request, flash
-from config import CLOUD_NAME, API_KEY, API_SECRET
 from flask_mysqldb import MySQL
 import os
 from website import mysql
 import cloudinary
+
 import cloudinary.uploader
 
 students = Blueprint('students', __name__)
 
-cloudinary.config(
-     cloud_name=CLOUD_NAME,
-     api_key=API_KEY,
-     api_secret=API_SECRET,
-)
+
 
 @students.route('/students')
 def record():
     my_cursor = mysql.connection.cursor()
-    my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, course.course_code FROM ssis_website.course
+    my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, students.image ,course.course_code FROM ssis_website.course
                              INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
     student_list = my_cursor.fetchall()
 
@@ -29,16 +25,11 @@ def record():
     mysql.connection.commit()
 
 
-
     return render_template("studentrecord.html", records=student_list, cour_c=cour_c, cor_coll=cor_coll)
 
 @students.route('/updated_students', methods=['GET', 'POST'])
 def updated_students():
     my_cursor = mysql.connection.cursor()
-    my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, course.course_code FROM ssis_website.course
-                                 INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
-    student_list = my_cursor.fetchall()
-
     my_cursor.execute("SELECT course.college_code FROM ssis_website.course")
     cor_coll = my_cursor.fetchall()
 
@@ -56,18 +47,18 @@ def updated_students():
             yrlvl = request.form.get('yrlvl')
             image = request.files["image"]
 
+            result = cloudinary.uploader.upload(image)
+            url = result.get("url")
+
             print(idn)
             print(fname)
             print(lname)
             print(courses)
             print(yrlvl)
             print(gender)
-
-            result = cloudinary.uploader.upload(image)
-            url = result.get("url")
-
             print(url)
-            '''
+
+
             if len(fname) == 0:
                 flash('Please Complete the Name', category='error')
             elif len(lname) == 0:
@@ -79,12 +70,14 @@ def updated_students():
             elif gender == None:
                 flash('Please Select Gender', category='error')
             else:
-                my_cursor.execute("UPDATE ssis_website.students SET students.first_name=%s, students.last_name=%s, students.gender=%s, students.course_code=%s, students.year=%s WHERE students.id_number=%s",
-                    (fname, lname, gender, courses, yrlvl, idn))
-    
+                my_cursor.execute("""UPDATE ssis_website.students SET students.first_name=%s, students.last_name=%s, students.gender=%s, students.course_code=%s, students.year=%s, students.image=%s 
+                                  WHERE students.id_number=%s""", (fname, lname, gender, courses, yrlvl, url, idn))
                 flash("Student Successfully Updated", category='success')
                 mysql.connection.commit()
-            '''
+
+    my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, students.image ,course.course_code FROM ssis_website.course
+                                INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
+    student_list = my_cursor.fetchall()
 
     return render_template("studentrecord.html", records=student_list, cour_c=cour_c, cor_coll=cor_coll)
 

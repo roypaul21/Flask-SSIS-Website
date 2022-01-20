@@ -29,10 +29,6 @@ def register():
 
     if request.method == 'POST':
 
-        my_cursor.execute("SELECT * FROM course")
-        stud_cor = my_cursor.fetchall()
-        mysql.connection.commit()
-
         fname = request.form.get('firstname')
         lname = request.form.get('lastname')
         idnum = request.form.get('idnum')
@@ -40,9 +36,6 @@ def register():
         yrlvl = request.form.get('yrlvl')
         gender = request.form.get('gender')
 
-        print(course)
-        print(yrlvl)
-        print(gender)
 
         if len(fname) == 0:
             flash('Please Complete the Name', category='error')

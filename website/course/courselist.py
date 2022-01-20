@@ -60,9 +60,6 @@ def add_course():
 @course.route('/updated_course', methods=['GET', 'POST'])
 def updated_course():
     my_cursor = mysql.connection.cursor()
-    my_cursor.execute("""SELECT course.course_code, course.course_name, college.college_name, college.college_code FROM ssis_website.college
-                              INNER JOIN ssis_website.course ON course.college_code = college.college_code""")
-    cor_list = my_cursor.fetchall()
 
     my_cursor.execute("SELECT college_code FROM college")
     cor_coll = my_cursor.fetchall()
@@ -85,17 +82,16 @@ def updated_course():
             flash("Course Successfully Updated",category='success')
             mysql.connection.commit()
 
+        my_cursor.execute("""SELECT course.course_code, course.course_name, college.college_name, college.college_code FROM ssis_website.college
+                                      INNER JOIN ssis_website.course ON course.college_code = college.college_code""")
+        cor_list = my_cursor.fetchall()
+
         return render_template('courses.html', cour_c=cour_c, cor_coll=cor_coll, cor_list=cor_list)
 
 
 @course.route('/delete_course', methods=['GET', 'POST'])
 def delete_course():
     my_cursor = mysql.connection.cursor()
-    my_cursor.execute("""SELECT course.course_code, course.course_name, college.college_name, college.college_code FROM ssis_website.college
-                                 INNER JOIN ssis_website.course ON course.college_code = college.college_code""")
-    cor_list = my_cursor.fetchall()
-    mysql.connection.commit()
-
     my_cursor.execute("SELECT college_code FROM college")
     cor_coll = my_cursor.fetchall()
     mysql.connection.commit()
@@ -106,13 +102,15 @@ def delete_course():
     mysql.connection.commit()
 
     if request.method == 'POST':
-       cc = request.form.get('course-code')
-
        my_cursor.execute("DELETE FROM ssis_website.course WHERE course.course_code=%s", (request.form.get('course-code'),))
 
        flash("Course Successfully Remove", category='success')
        mysql.connection.commit()
 
+    my_cursor.execute("""SELECT course.course_code, course.course_name, college.college_name, college.college_code FROM ssis_website.college
+                                     INNER JOIN ssis_website.course ON course.college_code = college.college_code""")
+    cor_list = my_cursor.fetchall()
+    mysql.connection.commit()
 
     return render_template("courses.html", cour_c=cour_c, cor_coll=cor_coll, cor_list=cor_list)
 
