@@ -41,12 +41,6 @@ def updated_students():
         courses = request.form.get('course-code')
         yrlvl = request.form.get('yrlvl')
 
-        print(idn)
-        print(fname)
-        print(lname)
-        print(courses)
-        print(yrlvl)
-        print(gender)
 
         if len(fname) == 0:
             flash('Please Complete the Name', category='error')

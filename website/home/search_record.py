@@ -62,15 +62,6 @@ def delete_student():
     mysql.connection.commit()
 
     if request.method == 'POST':
-        '''
-        my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year FROM ssis_website.students 
-                                                           INNER JOIN ssis_website.course ON course.course_code = students.course_code
-                                                           INNER JOIN ssis_website.college ON college.college_code = course.college_code
-                                                           WHERE students.id_number LIKE %s """, (("%" + id_nm + "%"),))
-
-        search_std = my_cursor.fetchall()
-        '''
-
         idn = request.form.get('idnum')
 
         print(idn)
@@ -80,7 +71,15 @@ def delete_student():
         flash("Student Successfully Remove", category='success')
         mysql.connection.commit()
 
-        return render_template("search_record.html", cour_c=cour_c, cor_coll=cor_coll)
+        my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year FROM ssis_website.students 
+                                                                   INNER JOIN ssis_website.course ON course.course_code = students.course_code
+                                                                   INNER JOIN ssis_website.college ON college.college_code = course.college_code
+                                                                   WHERE students.id_number LIKE %s """,
+                          (idn,))
+
+        search_std = my_cursor.fetchall()
+
+        return render_template("search_record.html", search_std=search_std, cour_c=cour_c, cor_coll=cor_coll)
 
 
 @search.route('/update_student', methods=['GET', 'POST'])
@@ -101,17 +100,9 @@ def update_student():
         gender = request.form.get('gender')
         courses = request.form.get('course-code')
         yrlvl = request.form.get('yrlvl')
-        '''
-        my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year, students.course_code FROM ssis_website.students 
-                                                    INNER JOIN ssis_website.course ON course.course_code = students.course_code
-                                                    INNER JOIN ssis_website.college ON college.college_code = course.college_code
-                                                    WHERE students.id_number LIKE %s """, (("%" + id_nm + "%"),))
 
 
-        search_std = my_cursor.fetchall()
-        '''
 
-        print(search_std)
 
         if len(fname) == 0:
             flash('Please Complete the Name', category='error')
@@ -131,8 +122,16 @@ def update_student():
             flash("Student Successfully Updated", category='success')
             mysql.connection.commit()
 
+        my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year, students.course_code FROM ssis_website.students 
+                                                            INNER JOIN ssis_website.course ON course.course_code = students.course_code
+                                                            INNER JOIN ssis_website.college ON college.college_code = course.college_code
+                                                            WHERE students.id_number LIKE %s """,
+                          (idn,))
+
+        search_std = my_cursor.fetchall()
+        print(search_std)
+
         return render_template("search_record.html", search_std = search_std, cour_c=cour_c, cor_coll=cor_coll)
 
-    return render_template("search_record.html", search_std = search_std, cour_c=cour_c, cor_coll=cor_coll)
 
 
