@@ -10,9 +10,9 @@ search = Blueprint('search_record', __name__)
 
 @search.route('/search_record', methods=['GET', 'POST'])
 def search_record():
-    global id_nm
-    my_cursor = mysql.connection.cursor()
+    global id_nm, fnm, lnm, gndr, crs, clg, yrl
 
+    my_cursor = mysql.connection.cursor()
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
     cour_c = my_cursor.fetchall()
 
@@ -28,6 +28,9 @@ def search_record():
         crs = str(request.form.get('drpcourse'))
         clg = str(request.form.get('drpcollege-code'))
         yrl = str(request.form.get('drpyrlvl'))
+        print(crs)
+        print(clg)
+        print(yrl)
 
 
 
@@ -74,11 +77,14 @@ def delete_student():
         flash("Student Successfully Remove", category='success')
         mysql.connection.commit()
 
-        my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year, students.image FROM ssis_website.students 
-                                                                   INNER JOIN ssis_website.course ON course.course_code = students.course_code
-                                                                   INNER JOIN ssis_website.college ON college.college_code = course.college_code
-                                                                   WHERE students.id_number LIKE %s """,
-                          (("%" + id_nm + "%"),))
+        my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year, students.image, students.course_code FROM ssis_website.students 
+                                                            INNER JOIN ssis_website.course ON course.course_code = students.course_code
+                                                            INNER JOIN ssis_website.college ON college.college_code = course.college_code
+                                                            WHERE students.id_number LIKE %s AND students.first_name LIKE %s AND students.last_name LIKE %s 
+                                                            AND students.gender LIKE %s AND students.course_code LIKE %s AND course.college_code LIKE %s AND students.year LIKE %s;""",
+                          (("%" + id_nm + "%"),
+                           ("%" + fnm + "%"), ("%" + lnm + "%"), ("%"+gndr+"%"),
+                           ("%" + crs + "%"), ("%" + clg + "%"), ("%" + yrl + "%")))
 
         search_std = my_cursor.fetchall()
 
@@ -130,13 +136,15 @@ def update_student():
                  mysql.connection.commit()
 
             my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year, students.image, students.course_code FROM ssis_website.students 
-                                                                               INNER JOIN ssis_website.course ON course.course_code = students.course_code
-                                                                               INNER JOIN ssis_website.college ON college.college_code = course.college_code
-                                                                               WHERE students.id_number LIKE %s """,
-                              (("%" + id_nm + "%"),))
+                                                                INNER JOIN ssis_website.course ON course.course_code = students.course_code
+                                                                INNER JOIN ssis_website.college ON college.college_code = course.college_code
+                                                                WHERE students.id_number LIKE %s AND students.first_name LIKE %s AND students.last_name LIKE %s 
+                                                                AND students.gender LIKE %s AND students.course_code LIKE %s AND course.college_code LIKE %s AND students.year LIKE %s;""",
+                              (("%" + id_nm + "%"),
+                               ("%" + fnm + "%"), ("%" + lnm + "%"), ("%"+gndr+"%"),
+                               ("%" + crs + "%"), ("%" + clg + "%"), ("%" + yrl + "%")))
 
             search_std = my_cursor.fetchall()
-            print(search_std)
 
             return render_template("search_record.html", search_std=search_std, cour_c=cour_c, cor_coll=cor_coll)
 
