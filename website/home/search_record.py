@@ -37,8 +37,8 @@ def search_record():
                                     INNER JOIN ssis_website.course ON course.course_code = students.course_code
                                     INNER JOIN ssis_website.college ON college.college_code = course.college_code
                                     WHERE students.id_number LIKE %s AND students.first_name LIKE %s AND students.last_name LIKE %s 
-                                    AND students.gender = %s AND students.course_code LIKE %s AND course.college_code LIKE %s AND students.year LIKE %s;""",
-                                    ("%"+str(request.form.get('search-idnum')+"%"),("%"+(request.form.get('search-fname'))+"%"),("%"+lnm+"%"),(gndr),("%"+crs+"%"),("%"+clg+"%"),("%"+yrl+"%")))
+                                    AND students.gender LIKE %s AND students.course_code LIKE %s AND course.college_code LIKE %s AND students.year LIKE %s;""",
+                                    ("%"+str(request.form.get('search-idnum')+"%"),("%"+(request.form.get('search-fname'))+"%"),("%"+lnm+"%"),("%"+gndr+"%"),("%"+crs+"%"),("%"+clg+"%"),("%"+yrl+"%")))
 
                search_std = my_cursor.fetchall()
                print(search_std)
@@ -75,9 +75,9 @@ def delete_student():
                                             INNER JOIN ssis_website.course ON course.course_code = students.course_code
                                             INNER JOIN ssis_website.college ON college.college_code = course.college_code
                                             WHERE students.id_number LIKE %s AND students.first_name LIKE %s AND students.last_name LIKE %s 
-                                            AND students.gender = %s AND students.course_code LIKE %s AND course.college_code LIKE %s AND students.year LIKE %s;""",
+                                            AND students.gender LIKE %s AND students.course_code LIKE %s AND course.college_code LIKE %s AND students.year LIKE %s;""",
                                             (("%" + id_nm + "%"),
-                                            ("%" + fnm + "%"), ("%" + lnm + "%"), (gndr),
+                                            ("%" + fnm + "%"), ("%" + lnm + "%"), ("%"+gndr+"%"),
                                             ("%" + crs + "%"), ("%" + clg + "%"), ("%" + yrl + "%")))
 
         search_std = my_cursor.fetchall()
@@ -129,9 +129,9 @@ def update_student():
                                                     INNER JOIN ssis_website.course ON course.course_code = students.course_code
                                                     INNER JOIN ssis_website.college ON college.college_code = course.college_code
                                                     WHERE students.id_number LIKE %s AND students.first_name LIKE %s AND students.last_name LIKE %s 
-                                                    AND students.gender = %s AND students.course_code LIKE %s AND course.college_code LIKE %s AND students.year LIKE %s;""",
+                                                    AND students.gender LIKE %s AND students.course_code LIKE %s AND course.college_code LIKE %s AND students.year LIKE %s;""",
                           (("%" + id_nm + "%"),
-                           ("%" + fnm + "%"), ("%" + lnm + "%"), (gndr),
+                           ("%" + fnm + "%"), ("%" + lnm + "%"), ("%"+gndr+"%"),
                            ("%" + crs + "%"), ("%" + clg + "%"), ("%" + yrl + "%")))
 
         search_std = my_cursor.fetchall()
