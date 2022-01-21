@@ -3,7 +3,6 @@ from flask_mysqldb import MySQL
 import os
 from website import mysql
 import cloudinary
-
 import cloudinary.uploader
 
 students = Blueprint('students', __name__)
@@ -46,6 +45,7 @@ def updated_students():
             courses = request.form.get('course-code')
             yrlvl = request.form.get('yrlvl')
             image = request.files["image"]
+            print(image)
 
             result = cloudinary.uploader.upload(image)
             url = result.get("url")
@@ -85,9 +85,6 @@ def updated_students():
 @students.route('/delete_students', methods=['GET', 'POST'])
 def delete_students():
     my_cursor = mysql.connection.cursor()
-    my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, course.course_code FROM ssis_website.course
-                                     INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
-    student_list = my_cursor.fetchall()
 
     my_cursor.execute("SELECT course.college_code FROM ssis_website.course")
     cor_coll = my_cursor.fetchall()
@@ -105,6 +102,10 @@ def delete_students():
 
         flash("Student Successfully Remove", category='success')
         mysql.connection.commit()
+
+    my_cursor.execute("""SELECT students.id_number, students.first_name, students.last_name, students.gender, course.course_name, students.year, students.image, course.course_code FROM ssis_website.course
+                                         INNER JOIN ssis_website.students ON students.course_code = course.course_code""")
+    student_list = my_cursor.fetchall()
 
     return render_template("studentrecord.html", records=student_list, cour_c=cour_c, cor_coll=cor_coll)
 

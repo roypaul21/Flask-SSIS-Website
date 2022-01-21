@@ -2,13 +2,15 @@ from flask import Blueprint, render_template, request, flash
 from flask_mysqldb import MySQL
 import os
 from website import mysql
+import cloudinary
+import cloudinary.uploader
 
 
 search = Blueprint('search_record', __name__)
 
 @search.route('/search_record', methods=['GET', 'POST'])
 def search_record():
-    global search_std
+    global id_nm
     my_cursor = mysql.connection.cursor()
 
     my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
@@ -33,7 +35,7 @@ def search_record():
                flash("Please Enter ID Number to Search", category='error')
 
         else:
-               my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year, students.course_code FROM ssis_website.students 
+               my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year, students.image, students.course_code FROM ssis_website.students 
                                     INNER JOIN ssis_website.course ON course.course_code = students.course_code
                                     INNER JOIN ssis_website.college ON college.college_code = course.college_code
                                     WHERE students.id_number LIKE %s AND students.first_name LIKE %s AND students.last_name LIKE %s 
@@ -41,7 +43,7 @@ def search_record():
                                     ("%"+str(request.form.get('search-idnum')+"%"),("%"+(request.form.get('search-fname'))+"%"),("%"+lnm+"%"),("%"+gndr+"%"),("%"+crs+"%"),("%"+clg+"%"),("%"+yrl+"%")))
 
                search_std = my_cursor.fetchall()
-               print(search_std)
+
                mysql.connection.commit()
                if not search_std:
                    flash("No Student Recorded According to your Search Fields (Search Again)", category='error')
@@ -62,77 +64,80 @@ def delete_student():
     mysql.connection.commit()
 
     if request.method == 'POST':
-        '''
-        my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year FROM ssis_website.students 
-                                                           INNER JOIN ssis_website.course ON course.course_code = students.course_code
-                                                           INNER JOIN ssis_website.college ON college.college_code = course.college_code
-                                                           WHERE students.id_number LIKE %s """, (("%" + id_nm + "%"),))
 
-        search_std = my_cursor.fetchall()
-        '''
 
         idn = request.form.get('idnum')
 
-        print(idn)
         my_cursor.execute("DELETE FROM ssis_website.students WHERE students.id_number=%s",
                           (request.form.get('idnum'),))
 
         flash("Student Successfully Remove", category='success')
         mysql.connection.commit()
 
-        return render_template("search_record.html", cour_c=cour_c, cor_coll=cor_coll)
+        my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year, students.image FROM ssis_website.students 
+                                                                   INNER JOIN ssis_website.course ON course.course_code = students.course_code
+                                                                   INNER JOIN ssis_website.college ON college.college_code = course.college_code
+                                                                   WHERE students.id_number LIKE %s """,
+                          (("%" + id_nm + "%"),))
+
+        search_std = my_cursor.fetchall()
+
+
+        return render_template("search_record.html", search_std=search_std, cour_c=cour_c, cor_coll=cor_coll)
 
 
 @search.route('/update_student', methods=['GET', 'POST'])
 def update_student():
     if request.method == 'POST':
-        my_cursor = mysql.connection.cursor()
+        if request.files:
+            my_cursor = mysql.connection.cursor()
 
-        my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
-        cour_c = my_cursor.fetchall()
+            my_cursor.execute("SELECT course.course_code FROM ssis_website.course")
+            cour_c = my_cursor.fetchall()
 
-        my_cursor.execute("SELECT college_code FROM college")
-        cor_coll = my_cursor.fetchall()
-        mysql.connection.commit()
-
-        idn = request.form.get('idnum')
-        fname = request.form.get('first-name')
-        lname = request.form.get('last-name')
-        gender = request.form.get('gender')
-        courses = request.form.get('course-code')
-        yrlvl = request.form.get('yrlvl')
-        '''
-        my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year, students.course_code FROM ssis_website.students 
-                                                    INNER JOIN ssis_website.course ON course.course_code = students.course_code
-                                                    INNER JOIN ssis_website.college ON college.college_code = course.college_code
-                                                    WHERE students.id_number LIKE %s """, (("%" + id_nm + "%"),))
-
-
-        search_std = my_cursor.fetchall()
-        '''
-
-        print(search_std)
-
-        if len(fname) == 0:
-            flash('Please Complete the Name', category='error')
-        elif len(lname) == 0:
-            flash('Please Complete the Name', category='error')
-        elif courses == None:
-            flash('Please Select Course', category='error')
-        elif yrlvl == None:
-            flash('Please Select Year Level', category='error')
-        elif gender == None:
-            flash('Please Select Gender', category='error')
-        else:
-            my_cursor.execute(
-                "UPDATE ssis_website.students SET students.first_name=%s, students.last_name=%s, students.gender=%s, students.course_code=%s, students.year=%s WHERE students.id_number=%s",
-                (fname, lname, gender, courses, yrlvl, idn))
-
-            flash("Student Successfully Updated", category='success')
+            my_cursor.execute("SELECT college_code FROM college")
+            cor_coll = my_cursor.fetchall()
             mysql.connection.commit()
 
-        return render_template("search_record.html", search_std = search_std, cour_c=cour_c, cor_coll=cor_coll)
+            idn = request.form.get('idnum')
+            fname = request.form.get('first-name')
+            lname = request.form.get('last-name')
+            gender = request.form.get('gender')
+            courses = request.form.get('course-code')
+            yrlvl = request.form.get('yrlvl')
+            image = request.files["image"]
 
-    return render_template("search_record.html", search_std = search_std, cour_c=cour_c, cor_coll=cor_coll)
+            result = cloudinary.uploader.upload(image)
+            url = result.get("url")
+
+            print(url)
+            if len(fname) == 0:
+                flash('Please Complete the Name', category='error')
+            elif len(lname) == 0:
+                flash('Please Complete the Name', category='error')
+            elif courses == None:
+                flash('Please Select Course', category='error')
+            elif yrlvl == None:
+                flash('Please Select Year Level', category='error')
+            elif gender == None:
+                flash('Please Select Gender', category='error')
+            else:
+                 my_cursor.execute(
+                    "UPDATE ssis_website.students SET students.first_name=%s, students.last_name=%s, students.gender=%s, students.course_code=%s, students.year=%s, students.image=%s WHERE students.id_number=%s",
+                      (fname, lname, gender, courses, yrlvl, url, idn))
+
+                 flash("Student Successfully Updated", category='success')
+                 mysql.connection.commit()
+
+            my_cursor.execute("""SELECT students.id_number,students.first_name,students.last_name,students.gender, course.course_name, students.year, students.image, students.course_code FROM ssis_website.students 
+                                                                               INNER JOIN ssis_website.course ON course.course_code = students.course_code
+                                                                               INNER JOIN ssis_website.college ON college.college_code = course.college_code
+                                                                               WHERE students.id_number LIKE %s """,
+                              (("%" + id_nm + "%"),))
+
+            search_std = my_cursor.fetchall()
+            print(search_std)
+
+            return render_template("search_record.html", search_std=search_std, cour_c=cour_c, cor_coll=cor_coll)
 
 

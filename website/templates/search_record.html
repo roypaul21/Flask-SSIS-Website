@@ -170,12 +170,45 @@
                      font-size:18px;
                      color:black;
                      }
+
+        .image-box{
+          width: 50px;
+          height: 45px;
+          border: 1px solid black;
+        }
+
+        .student_image {
+               display: block;
+               margin-left: auto;
+               margin-right: auto;
+               width: 100%;
+               height:100%;
+               cursor:pointer;
+        }
+
+        .big-student_image{
+
+             position:relative;
+             width:0px;
+             display:inline-block;
+             -webkit-transition:width 0.3s linear 0s;
+             transition: width 0.3s linear 0s;
+             z-index:10;
+        }
+
+        .student_image:hover + .big-student_image{
+              width:150px;
+
+
+        }
+
        </style>
         <h1 class="studentss">Searched Student's Record</h1>
         <div class="students_table">
             <table class="table">
                 <thead>
                   <tr>
+                    <td class="border-0"></td>
                     <td>ID Number</td>
                     <td>First Name</td>
                     <td>Last Name</td>
@@ -188,6 +221,12 @@
                 <tbody>
                   {% for s in search_std %}
                   <tr>
+                      <td class="border-0" width="50">
+                         <div class="image-box">
+                            <img src="{{s[6]}}" alt="" class="student_image" id="profile-image" name="profile-image">
+                             <img src="{{s[6]}}" alt="" class="big-student_image" id="big-profile-image" name="profile-image">
+                         </div>
+                      </td>
                       <td>{{s[0]}}</td>
                       <td>{{s[1]}}</td>
                       <td>{{s[2]}}</td>
@@ -209,7 +248,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                 <form action="{{url_for('search_record.update_student')}}" method="POST">
+                                 <form action="{{url_for('search_record.update_student')}}" enctype="multipart/form-data" method="POST">
                                      <div>
                                          <input type="text" class="idn" id="idnum" name="idnum" value="{{s[0]}}">
                                      </div>
@@ -227,7 +266,7 @@
                                          <select class="course-option"
                                                  name="course-code"
                                                  id="course-code">
-                                         <option selected="selected">{{s[6]}}</option><
+                                         <option selected="selected">{{s[7]}}</option><
                                            {% for ccc in cour_c %}
                                          <option>{{ccc[0]}}</option>
                                            {% endfor %}
@@ -257,6 +296,14 @@
                                          <option>Fifth Year</option>
                                          </select>
                                      </div>
+
+                                     <div class="form-group" style="position:absolute; top:250px; left:150px; width:500px;">
+                                          <label style="color:black; font-weight:bold;">Select Student Image</label>
+                                          <div class="custom-file">
+                                              <input type="file" class="custom-file-input" name="image" id="image" style="color:black;">
+                                          </div>
+                                     </div>
+
                                      <div class="modal-footer">
                                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                       <button type="submit" class="btn btn-primary">Update</button>
